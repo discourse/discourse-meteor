@@ -18,6 +18,34 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
                         :token_url => '/oauth2/token'
                       }
   end
+
+  def after_authenticate(auth)
+    result = Auth::Result.new
+    token = URI.escape(auth['credentials']['token'])
+    token.gsub!(/\+/, '%2B')
+
+    user = JSON.parse(open("https://www.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" }).read)
+
+    result.username = user['username']
+    if user['emails'].present?
+      email = user['emails'].find {|e| e['primary'] }
+      if email.present?
+        result.email = email['address']
+        result.email_valid = email['verified']
+      end
+    end
+
+    current_info = ::PluginStore.get("meteor", "meteor_user_#{user['id']}")
+    if current_info
+      result.user = User.where(id: current_info[:user_id]).first
+    end
+    result.extra_data = { meteor_user_id: user['id'] }
+    result
+  end
+
+  def after_create_account(user, auth)
+    ::PluginStore.set("meteor", "meteor_user_#{auth[:extra_data][:meteor_user_id]}", {user_id: user.id })
+  end
 end
 
 auth_provider title: "with Meteor",
