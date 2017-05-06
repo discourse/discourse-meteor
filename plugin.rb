@@ -5,9 +5,17 @@
 
 require_dependency 'auth/oauth2_authenticator.rb'
 
+class ::OmniAuth::Strategies::Oauth2Meteor < ::OmniAuth::Strategies::OAuth2
+  option :name, "oauth2_meteor"
+
+  def callback_url
+    full_host + script_name + callback_path
+  end
+end
+
 class MeteorAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
-    omniauth.provider :oauth2,
+    omniauth.provider :oauth2_meteor,
                       :name => 'meteor',
                       :client_id => GlobalSetting.meteor_client_id,
                       :client_secret => GlobalSetting.meteor_client_secret,
