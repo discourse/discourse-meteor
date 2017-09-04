@@ -17,8 +17,8 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
   def register_middleware(omniauth)
     omniauth.provider :oauth2_meteor,
                       :name => 'meteor',
-                      :client_id => GlobalSetting.meteor_client_id,
-                      :client_secret => GlobalSetting.meteor_client_secret,
+                      :client_id => GlobalSetting.try(:meteor_client_id),
+                      :client_secret => GlobalSetting.try(:meteor_client_secret),
                       :provider_ignores_state => true,
                       :client_options => {
                         :site => 'https://www.meteor.com',
