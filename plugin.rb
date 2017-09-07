@@ -49,7 +49,7 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
     end
 
     if result.email && result.email_valid
-      result.user ||= User.find_by(email: result.email)
+      result.user ||= User.find_by_email(result.email)
     end
 
     result.extra_data = { meteor_user_id: user['id'] }
