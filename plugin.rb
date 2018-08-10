@@ -59,6 +59,10 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
   def after_create_account(user, auth)
     ::PluginStore.set("meteor", "meteor_user_#{auth[:extra_data][:meteor_user_id]}", {user_id: user.id })
   end
+
+  def enabled?
+    true
+  end
 end
 
 auth_provider title: "with Meteor",
