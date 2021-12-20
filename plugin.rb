@@ -21,7 +21,7 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
                       :client_secret => GlobalSetting.try(:meteor_client_secret),
                       :provider_ignores_state => true,
                       :client_options => {
-                        :site => 'https://www.meteor.com',
+                        :site => 'https://accounts.meteor.com',
                         :authorize_url => '/oauth2/authorize',
                         :token_url => '/oauth2/token'
                       }
@@ -32,7 +32,7 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
     token = URI.escape(auth['credentials']['token'])
     token.gsub!(/\+/, '%2B')
 
-    user = JSON.parse(open("https://www.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" }).read)
+    user = JSON.parse(open("https://accounts.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" }).read)
 
     result.username = user['username']
     if user['emails'].present?
