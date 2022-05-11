@@ -5,8 +5,6 @@
 # authors: Robin Ward
 # transpile_js: true
 
-require_dependency "auth/oauth2_authenticator.rb"
-
 class ::OmniAuth::Strategies::Oauth2Meteor < ::OmniAuth::Strategies::OAuth2
   option :name, "oauth2_meteor"
 
