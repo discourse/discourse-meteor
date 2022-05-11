@@ -13,7 +13,11 @@ class ::OmniAuth::Strategies::Oauth2Meteor < ::OmniAuth::Strategies::OAuth2
   end
 end
 
-class MeteorAuthenticator < ::Auth::OAuth2Authenticator
+class MeteorAuthenticator < ::Auth::Authenticator
+  def name
+    "meteor"
+  end
+
   def register_middleware(omniauth)
     omniauth.provider(
       :oauth2_meteor,
@@ -69,8 +73,7 @@ end
 
 auth_provider(
   title: "with Meteor",
-  authenticator: MeteorAuthenticator.new("meteor"),
-  message: "Meteor"
+  authenticator: MeteorAuthenticator.new,
 )
 
 register_css <<~CSS
