@@ -33,7 +33,7 @@ class MeteorAuthenticator < ::Auth::OAuth2Authenticator
 
   def after_authenticate(auth)
     result = Auth::Result.new
-    token = URI.escape(auth["credentials"]["token"])
+    token = Addressable::URI.escape(auth["credentials"]["token"])
     token.gsub!(/\+/, "%2B")
 
     user = JSON.parse(open("https://accounts.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" }).read)
