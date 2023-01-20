@@ -38,7 +38,10 @@ class MeteorAuthenticator < ::Auth::Authenticator
     token = Addressable::URI.escape(auth["credentials"]["token"])
     token.gsub!(/\+/, "%2B")
 
-    response = Faraday.get("https://accounts.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" })
+    bearer_token = "Bearer #{token}"
+    connection = Faraday.new { |f| f.adapter FinalDestination::FaradayAdapter }
+    headers = { "Authorization" => bearer_token, "Accept" => "application/json" }
+    response = connection.run_request(:get, "https://accounts.meteor.com/api/v1/identity", nil, headers)
     user = JSON.parse(response.body)
 
     result.username = user["username"]
