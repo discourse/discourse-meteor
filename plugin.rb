@@ -38,7 +38,8 @@ class MeteorAuthenticator < ::Auth::Authenticator
     token = Addressable::URI.escape(auth["credentials"]["token"])
     token.gsub!(/\+/, "%2B")
 
-    user = JSON.parse(open("https://accounts.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" }).read)
+    response = Faraday.get("https://accounts.meteor.com/api/v1/identity", { "Authorization" => "Bearer #{token}" })
+    user = JSON.parse(response.body)
 
     result.username = user["username"]
     if user["emails"].present?
