@@ -3,7 +3,6 @@
 # about: Meteor's OAuth Plugin
 # version: 0.1
 # authors: Robin Ward
-# transpile_js: true
 
 class ::OmniAuth::Strategies::Oauth2Meteor < ::OmniAuth::Strategies::OAuth2
   option :name, "oauth2_meteor"
@@ -28,8 +27,8 @@ class MeteorAuthenticator < ::Auth::Authenticator
       client_options: {
         site: "https://accounts.meteor.com",
         authorize_url: "/oauth2/authorize",
-        token_url: "/oauth2/token"
-      }
+        token_url: "/oauth2/token",
+      },
     )
   end
 
@@ -41,7 +40,8 @@ class MeteorAuthenticator < ::Auth::Authenticator
     bearer_token = "Bearer #{token}"
     connection = Faraday.new { |f| f.adapter FinalDestination::FaradayAdapter }
     headers = { "Authorization" => bearer_token, "Accept" => "application/json" }
-    response = connection.run_request(:get, "https://accounts.meteor.com/api/v1/identity", nil, headers)
+    response =
+      connection.run_request(:get, "https://accounts.meteor.com/api/v1/identity", nil, headers)
     user = JSON.parse(response.body)
 
     result.username = user["username"]
@@ -54,20 +54,20 @@ class MeteorAuthenticator < ::Auth::Authenticator
     end
 
     current_info = ::PluginStore.get("meteor", "meteor_user_#{user["id"]}")
-    if current_info
-      result.user = User.where(id: current_info[:user_id]).first
-    end
+    result.user = User.where(id: current_info[:user_id]).first if current_info
 
-    if result.email && result.email_valid
-      result.user ||= User.find_by_email(result.email)
-    end
+    result.user ||= User.find_by_email(result.email) if result.email && result.email_valid
 
     result.extra_data = { meteor_user_id: user["id"] }
     result
   end
 
   def after_create_account(user, auth)
-    ::PluginStore.set("meteor", "meteor_user_#{auth[:extra_data][:meteor_user_id]}", { user_id: user.id })
+    ::PluginStore.set(
+      "meteor",
+      "meteor_user_#{auth[:extra_data][:meteor_user_id]}",
+      { user_id: user.id },
+    )
   end
 
   def enabled?
@@ -75,10 +75,7 @@ class MeteorAuthenticator < ::Auth::Authenticator
   end
 end
 
-auth_provider(
-  title: "with Meteor",
-  authenticator: MeteorAuthenticator.new,
-)
+auth_provider(title: "with Meteor", authenticator: MeteorAuthenticator.new)
 
 register_css <<~CSS
   button.btn-social.meteor {
