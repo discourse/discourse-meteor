@@ -4,6 +4,8 @@
 # version: 0.1
 # authors: Robin Ward
 
+register_asset "stylesheets/common/button.scss"
+
 class ::OmniAuth::Strategies::Oauth2Meteor < ::OmniAuth::Strategies::OAuth2
   option :name, "oauth2_meteor"
 
@@ -76,9 +78,3 @@ class MeteorAuthenticator < ::Auth::Authenticator
 end
 
 auth_provider(title: "with Meteor", authenticator: MeteorAuthenticator.new)
-
-register_css <<~CSS
-  button.btn-social.meteor {
-    background-color: #de4f4f;
-  }
-CSS
