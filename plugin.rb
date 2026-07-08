@@ -25,7 +25,6 @@ class MeteorAuthenticator < ::Auth::Authenticator
       name: "meteor",
       client_id: GlobalSetting.try(:meteor_client_id),
       client_secret: GlobalSetting.try(:meteor_client_secret),
-      provider_ignores_state: true,
       client_options: {
         site: "https://accounts.meteor.com",
         authorize_url: "/oauth2/authorize",
