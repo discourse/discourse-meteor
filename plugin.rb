@@ -29,6 +29,7 @@ class MeteorAuthenticator < ::Auth::Authenticator
         site: "https://accounts.meteor.com",
         authorize_url: "/oauth2/authorize",
         token_url: "/oauth2/token",
+        auth_scheme: :request_body,
       },
     )
   end
