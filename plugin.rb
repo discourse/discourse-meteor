@@ -73,7 +73,8 @@ class MeteorAuthenticator < ::Auth::Authenticator
   end
 
   def enabled?
-    true
+    GlobalSetting.try(:meteor_client_id).present? &&
+      GlobalSetting.try(:meteor_client_secret).present?
   end
 end
 
